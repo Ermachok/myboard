@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import bcrypt
 from jose import jwt
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, LargeBinary
 
 from app.core.config import JWT_ALG, JWT_EXP, JWT_SECRET
 from app.db.base import Base
@@ -18,9 +18,9 @@ def hash_password(password: str):
 class Users(Base):
     __tablename__ = "Users"
     id = Column(Integer, primary_key=True)
-    email = Column(String)
-    login = Column(String(50))
-    password = Column()
+    email = Column(String, unique=True)
+    login = Column(String, unique=True)
+    password = Column(LargeBinary, nullable=False)
 
     def verify_password(self, password: str) -> bool:
         """Verify if provided password matches stored hash"""
