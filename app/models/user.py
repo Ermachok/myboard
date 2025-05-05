@@ -5,7 +5,7 @@ from jose import jwt
 from sqlalchemy import Column, Integer, LargeBinary, String
 
 from app.core.config import JWT_ALG, JWT_EXP, JWT_SECRET
-from app.db.base import Base
+from app.db.database import Base
 
 
 def hash_password(password: str):
