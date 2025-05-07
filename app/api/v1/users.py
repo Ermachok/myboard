@@ -3,8 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import create_access_token
 from app.db.session import get_db
+from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin, UserLoginResponse, UserOut
-from app.services.user import create, get_by_email
+from app.services.user import create, get_by_email, get_current_user
 
 user_router = APIRouter(prefix="/api/users", tags=["Users"])
 
@@ -33,3 +34,8 @@ async def login_user(user_in: UserLogin, db: AsyncSession = Depends(get_db)):
 
     token = create_access_token(data={"sub": user.email})
     return {"token": token, "email": user.email}
+
+
+@user_router.get("/me")
+async def read_me(current_user: User = Depends(get_current_user)):
+    return current_user
