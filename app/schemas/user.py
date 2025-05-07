@@ -10,7 +10,7 @@ class UserCreate(UserBase):
     password: str = Field(..., min_length=8)
 
     class Config:
-        schema_extra = {
+        json_schema_extra = {
             "example": {
                 "email": "user@example.com",
                 "login": "johndoe",
@@ -52,4 +52,4 @@ class UserLoginResponse(BaseModel):
     email: EmailStr
 
     class Config:
-        orm_mode = True
+        from_attributes = True
