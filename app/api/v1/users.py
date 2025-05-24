@@ -31,6 +31,8 @@ async def login_user(user_in: UserLogin, db: AsyncSession = Depends(get_db)):
     return {"token": token, "email": user.email}
 
 
-@user_router.get("/me", response_model=UserOut, dependencies=[Depends(get_current_user)])
+@user_router.get(
+    "/me", response_model=UserOut, dependencies=[Depends(get_current_user)]
+)
 async def read_me(current_user: User = Depends(get_current_user)):
     return current_user
