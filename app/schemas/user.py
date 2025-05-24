@@ -1,4 +1,9 @@
-from pydantic import BaseModel, EmailStr, Field, field_validator
+from pydantic import BaseModel, EmailStr, Field
+
+
+class ORMBase(BaseModel):
+    class Config:
+        from_attributes = True
 
 
 class UserBase(BaseModel):
@@ -19,37 +24,27 @@ class UserCreate(UserBase):
         }
 
 
-class UserRead(UserBase):
+class UserRead(UserBase, ORMBase):
     id: int
     login: str
 
+
+class UserOut(UserRead):
+    pass
+
+
+class UserLogin(UserBase):
+    password: str = Field(..., min_length=8)
+
     class Config:
-        orm_mode = True
+        json_schema_extra = {
+            "example": {
+                "email": "user@example.com",
+                "password": "StrongPass123",
+            }
+        }
 
 
-class UserOut(BaseModel):
-    id: int
-    email: EmailStr
-    login: str
-
-    class Config:
-        orm_mode = True
-
-
-class UserLogin(BaseModel):
-    email: EmailStr
-    password: str
-
-    @field_validator("password")
-    def password_required(cls, v):
-        if not v:
-            raise ValueError("Password must not be empty")
-        return v
-
-
-class UserLoginResponse(BaseModel):
+class UserLoginResponse(ORMBase):
     token: str
     email: EmailStr
-
-    class Config:
-        from_attributes = True

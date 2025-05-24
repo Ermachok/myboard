@@ -21,6 +21,31 @@ async def get_by_email(
     return result.scalar_one_or_none()
 
 
+async def get_by_login(
+    db_session: AsyncSession, login: str | EmailStr
+) -> Optional[User]:
+    result = await db_session.execute(select(User).where(User.login == login))
+    return result.scalar_one_or_none()
+
+
+async def check_user_uniqueness(
+    db_session: AsyncSession, email: EmailStr, login: str
+) -> None:
+    user_by_email = await get_by_email(db_session, email)
+    if user_by_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already in use",
+        )
+
+    user_by_login = await get_by_login(db_session, login)
+    if user_by_login:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Login already in use",
+        )
+
+
 async def create(db_session: AsyncSession, user_in: UserCreate) -> User:
     user = User(email=user_in.email, login=user_in.login)
     user.set_password(user_in.password)
