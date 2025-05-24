@@ -4,8 +4,8 @@ import bcrypt
 from jose import jwt
 from sqlalchemy import Column, Integer, LargeBinary, String
 
-from config import JWT_ALG, JWT_EXP, JWT_SECRET
 from app.db.database import Base
+from config import JWT_ALG, JWT_EXP, JWT_SECRET
 
 
 def hash_password(password: str):

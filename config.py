@@ -1,8 +1,9 @@
 import os
+
 from starlette.config import Config
 
 base_dir = os.path.dirname(os.path.abspath(__file__))
-env_path = os.path.join(base_dir, '.env')
+env_path = os.path.join(base_dir, ".env")
 
 config = Config(env_path)
 

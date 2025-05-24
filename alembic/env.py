@@ -1,9 +1,10 @@
-from logging.config import fileConfig
-from sqlalchemy import create_engine
-from sqlalchemy import pool
-from alembic import context
 import os
+from logging.config import fileConfig
+
 from dotenv import load_dotenv
+from sqlalchemy import create_engine, pool
+
+from alembic import context
 
 load_dotenv()
 
@@ -19,6 +20,8 @@ target_metadata = Base.metadata
 SYNC_DB_URL = os.getenv("SYNC_DATABASE_URL")
 
 print(SYNC_DB_URL, target_metadata)
+
+
 def run_migrations_offline():
     context.configure(
         url=SYNC_DB_URL,
