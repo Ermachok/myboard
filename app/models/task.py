@@ -26,4 +26,5 @@ class Task(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     board = relationship("Board", back_populates="tasks")
-    assigned_user = relationship("User")
+    assigned_user = relationship("User", back_populates="tasks")
+

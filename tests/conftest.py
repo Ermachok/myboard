@@ -3,9 +3,11 @@ from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.db.database import Base
-from app.db.session import get_db
+from app.db.session import get_session
 from app.main import app
 from app.models.user import User  # noqa: F401
+from app.models.task import Task  # noqa: F401
+from app.models.board import Board  # noqa: F401
 
 DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 engine = create_async_engine(DATABASE_URL, echo=False)
@@ -37,7 +39,7 @@ async def test_session(setup_database):
 @pytest_asyncio.fixture
 async def client(test_session):
     """Асинхронный клиент FastAPI с тестовой БД"""
-    app.dependency_overrides[get_db] = lambda: test_session
+    app.dependency_overrides[get_session] = lambda: test_session
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as client:
