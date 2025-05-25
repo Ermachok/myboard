@@ -7,7 +7,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.security import decode_access_token
-from app.db.session import get_db
+from app.db.session import get_session
 from app.models.user import User
 from app.schemas.user import UserCreate
 
@@ -56,7 +56,7 @@ async def create(db_session: AsyncSession, user_in: UserCreate) -> User:
 
 
 async def get_current_user(
-    db: AsyncSession = Depends(get_db),
+    db: AsyncSession = Depends(get_session),
     token: str = Depends(oauth2_scheme),
 ) -> User:
     payload = decode_access_token(token)

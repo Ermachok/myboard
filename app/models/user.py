@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 import bcrypt
 from jose import jwt
 from sqlalchemy import Column, Integer, LargeBinary, String
+from sqlalchemy.orm import relationship
 
 from app.db.database import Base
 from config import JWT_ALG, JWT_EXP, JWT_SECRET
@@ -40,3 +41,6 @@ class User(Base):
             "exp": now + timedelta(seconds=JWT_EXP),
         }
         return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALG)
+
+    tasks = relationship("Task", back_populates="assigned_user")
+    boards = relationship("Board", back_populates="owner")
