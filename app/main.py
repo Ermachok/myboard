@@ -1,8 +1,9 @@
 from fastapi import FastAPI
 from fastapi.openapi.utils import get_openapi
 
-from app.api.v1.users import user_router
+from app.api.v1.boards import board_router
 from app.api.v1.tasks import task_router
+from app.api.v1.users import user_router
 
 app = FastAPI(
     title="My board",
@@ -42,4 +43,5 @@ def custom_openapi():
 
 app.openapi = custom_openapi
 app.include_router(user_router)
+app.include_router(board_router)
 app.include_router(task_router)
