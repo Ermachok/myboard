@@ -8,9 +8,9 @@ from app.db.database import Base
 
 
 class TaskStatus(enum.Enum):
-    todo = "TODO"
-    in_progress = "IN_PROGRESS"
-    done = "DONE"
+    todo = "todo"
+    in_progress = "in_progress"
+    done = "done"
 
 
 class Task(Base):
@@ -22,9 +22,8 @@ class Task(Base):
     status = Column(Enum(TaskStatus), default=TaskStatus.todo, nullable=False)
     board_id = Column(Integer, ForeignKey("boards.id"), nullable=False)
     assigned_user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = Column(DateTime, default=datetime.now)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 
     board = relationship("Board", back_populates="tasks")
     assigned_user = relationship("User", back_populates="tasks")
-
