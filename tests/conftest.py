@@ -5,9 +5,9 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.db.database import Base
 from app.db.session import get_session
 from app.main import app
-from app.models.user import User  # noqa: F401
-from app.models.task import Task  # noqa: F401
 from app.models.board import Board  # noqa: F401
+from app.models.task import Task  # noqa: F401
+from app.models.user import User  # noqa: F401
 
 DATABASE_URL = "sqlite+aiosqlite:///:memory:"
 engine = create_async_engine(DATABASE_URL, echo=False)
