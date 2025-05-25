@@ -116,5 +116,6 @@ class TaskInDBBase(TaskBase):
         from_attributes = True
 
 
-class Task(TaskInDBBase):
+class TaskResponse(TaskInDBBase):
     pass
+
