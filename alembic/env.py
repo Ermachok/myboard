@@ -9,9 +9,9 @@ from alembic import context
 load_dotenv()
 
 from app.db.database import Base
-from app.models.user import User
 from app.models.board import Board
 from app.models.task import Task
+from app.models.user import User
 
 config = context.config
 
