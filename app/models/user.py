@@ -44,4 +44,3 @@ class User(Base):
 
     tasks = relationship("Task", back_populates="assigned_user")
     boards = relationship("Board", back_populates="owner")
-
