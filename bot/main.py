@@ -7,7 +7,10 @@ from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
 from aiogram.filters import Command
 from aiogram.types import Message
+from auth.session import user_tokens
 from dotenv import load_dotenv
+from handlers.boards import boards_router
+from handlers.tasks import tasks_router
 
 load_dotenv()
 
@@ -15,11 +18,7 @@ API_URL = "http://localhost:8000/api"
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-
 dp = Dispatcher()
-
-# Временный storage токена (в будущем — сессии/БД)
-token: str | None = None
 
 
 @dp.message(Command("start"))
@@ -38,7 +37,6 @@ async def cmd_login(message: Message):
 
 @dp.message()
 async def handle_login_or_command(message: Message):
-    global token
     if "@" in message.text and " " in message.text:
         try:
             email, password = message.text.strip().split(" ", 1)
@@ -52,35 +50,16 @@ async def handle_login_or_command(message: Message):
             )
             if response.status_code == 200:
                 token = response.json()["token"]
+                user_tokens[message.from_user.id] = token
                 await message.answer("✅ Авторизация успешна!")
             else:
                 await message.answer("❌ Ошибка авторизации. Проверь логин и пароль.")
-    elif message.text.startswith("/boards"):
-        if not token:
-            await message.answer("Сначала авторизуйся с помощью /login.")
-            return
-
-        async with httpx.AsyncClient() as client:
-            headers = {"Authorization": f"Bearer {token}"}
-            response = await client.get(
-                f"{API_URL}/boards/?skip=0&limit=100", headers=headers
-            )
-            if response.status_code == 200:
-                boards = response.json()
-                if not boards:
-                    await message.answer("У тебя пока нет досок.")
-                else:
-                    text = "\n".join(
-                        [f"📝 {board['title']} (ID: {board['id']})" for board in boards]
-                    )
-                    await message.answer(f"Твои доски:\n{text}")
-            else:
-                await message.answer("Не удалось получить доски.")
     else:
         await message.answer("Неизвестная команда или сообщение.")
 
 
 async def main():
+    dp.include_routers(boards_router, tasks_router)
     await dp.start_polling(bot)
 
 
