@@ -3,10 +3,10 @@ import os
 import httpx
 from aiogram import Router
 from aiogram.filters import Command
-from aiogram.types import Message
+from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from bot.tasks.states import CreateTaskState
-
+from bot.keyboards.task_keyboards import status_keyboard
 
 from bot.auth.session import user_tokens
 
@@ -36,15 +36,8 @@ async def get_title(message: Message, state: FSMContext):
 @tasks_router.message(CreateTaskState.waiting_for_description)
 async def get_description(message: Message, state: FSMContext):
     await state.update_data(description=message.text)
-    await message.answer("Введите статус задачи (например: todo, in_progress, done):")
+    await message.answer("Выберите статус задачи:", reply_markup=status_keyboard())
     await state.set_state(CreateTaskState.waiting_for_status)
-
-
-@tasks_router.message(CreateTaskState.waiting_for_status)
-async def get_status(message: Message, state: FSMContext):
-    await state.update_data(status=message.text)
-    await message.answer("Введите ID доски, к которой относится задача:")
-    await state.set_state(CreateTaskState.waiting_for_board_id)
 
 
 @tasks_router.message(CreateTaskState.waiting_for_board_id)
@@ -91,3 +84,12 @@ async def get_assigned_user_id(message: Message, state: FSMContext):
         await message.answer("❌ Не удалось создать задачу. Проверь введённые данные.")
 
     await state.clear()
+
+
+@tasks_router.callback_query(lambda c: c.data.startswith("status_"))
+async def process_status_choice(callback: CallbackQuery, state: FSMContext):
+    status = callback.data.replace("status_", "")
+    await state.update_data(status=status)
+    await callback.message.edit_text(f"Статус выбран: <b>{status}</b>")
+    await callback.message.answer("Введите ID доски, к которой относится задача:")
+    await state.set_state(CreateTaskState.waiting_for_board_id)
