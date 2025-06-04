@@ -4,6 +4,7 @@ import httpx
 from aiogram import Router
 from aiogram.filters import Command
 from aiogram.types import Message
+
 from bot.auth.session import user_tokens
 
 API_URL = os.getenv("API_URL", "http://localhost:8000/api")
@@ -14,6 +15,7 @@ boards_router = Router()
 @boards_router.message(Command("boards"))
 async def get_boards(message: Message):
     token = user_tokens.get(message.from_user.id)
+
     if not token:
         await message.answer("Сначала авторизуйся с помощью /login.")
         return
